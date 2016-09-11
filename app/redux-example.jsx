@@ -16,16 +16,33 @@ switch (action.type) {
    return state;
  }
 };
-var store = redux.createStore(reducer);
+var store = redux.createStore(reducer, redux.compose(
+  window.devToolsExtension ? window.devToolsExtension() : f => f
+));
+
+//subscribe to changes
+var unsubscribe = store.subscribe(() => {
+  var state = store.getState();
+
+  console.log("Name is", state.name);
+  document.getElementById('app').innerHTML = state.name;
+
+});
 
 var currentSate = store.getState();
+//unsubscribe();
+
 
 console.log('currentSate', currentSate);
-
 
 store.dispatch({
   type: 'CHANGE_NAME',
   name: 'Stephen'
 });
 
-console.log('Name should be Stephen', store.getState());
+
+
+store.dispatch({
+  type: 'CHANGE_NAME',
+  name:'Emily'
+});

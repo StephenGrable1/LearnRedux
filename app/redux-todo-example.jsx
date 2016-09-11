@@ -21,13 +21,26 @@ var reducer = (state = stateDefault, action) => {
 
 };
 
-var store = redux.createStore(reducer);
+var store = redux.createStore(reducer, redux.compose(
+  window.devToolsExtension ? window.devToolsExtension() : f => f
+));
+
+//subscribe to changes
+store.subscribe(() => {
+  var state = store.getState();
+
+  document.getElementById('app').innerHTML = state.searchText;
+
+});
 
 console.log('currentSate', store.getState());
 
 store.dispatch({
   type: 'CHANGE_SEARCH_TEXT',
-  searchText: 'Stephen'
+  searchText: 'Feed dog'
 });
 
-console.log('searchText should be Stephen', store.getState());
+store.dispatch({
+  type: 'CHANGE_SEARCH_TEXT',
+  searchText: 'Go for a walk'
+});
