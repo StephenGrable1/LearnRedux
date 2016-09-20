@@ -12,56 +12,64 @@ var stateDefault = {
 var nextHobbyId = 1;
 var nextMovieId = 1;
 
-var reducer = (state = stateDefault, action) => {
-//  state = state || {name: 'Anonymous'};
+var nameReducer = (state = 'Anonymous', action) => {
+  switch (action.type) {
+    case 'CHANGE_NAME':
+      return action.name
 
-switch (action.type) {
-  case 'CHANGE_NAME':
-    return {
-      ...state,
-      name: action.name
-    };
+    default:
+      return state;
+  };
+};
 
-  case 'ADD_HOBBY':
-    return {
-      ...state,
-      hobbies: [
-        ...state.hobbies,
+var hobbiesReducer = (state = [], action) =>{
+  switch(action.type) {
+
+    case 'ADD_HOBBY':
+      return [
+        ...state,
         {
           id: nextHobbyId++,
           hobby: action.hobby
         }
-      ]
-    };
+      ];
 
-    case 'REMOVE_HOBBY':
-      return {
-        ...state,
-        hobbies: state.hobbies.filter((hobby) => hobby.id  !== action.id)
-      };
+      case 'REMOVE_HOBBY':
+        return state.filter((hobby) => hobby.id  !== action.id)
 
+      default:
+        return state;
+  };
+};
+
+
+var moviesReducer = (state = [], action) => {
+  switch(action.type) {
     case 'ADD_MOVIE':
-      return {
+      return [
         ...state,
-        movies: [
-          ...state.movies,
-          {
-            id: nextMovieId++,
-            title: action.title,
-            genre: action.genre
-          }
-        ]
-      };
+        {
+          id: nextMovieId++,
+          title: action.title,
+          genre: action.genre
+        }
+      ];
 
       case 'REMOVE_MOVIE':
-        return {
-          ...state,
-          movies: state.movies.filter((movie) => movie.id !== action.id)
-        };
-  default:
-   return state;
- }
+        return state.filter((movie) => movie.id !== action.id)
+
+      default:
+        return state;
+  };
 };
+
+var reducer = redux.combineReducers({
+  name: nameReducer,
+  hobbies: hobbiesReducer,
+  movies: moviesReducer
+})
+
+
 var store = redux.createStore(reducer, redux.compose(
   window.devToolsExtension ? window.devToolsExtension() : f => f
 ));
